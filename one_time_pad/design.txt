@@ -2,34 +2,34 @@
 //MATRÍCULA: 2020053246
 
 module reg_otp #(parameter DATA_WIDTH = 8)(
-  input clk,
-  input sinal,
-  input [DATA_WIDTH-1:0] mensagem,
-  output [DATA_WIDTH-1:0] cifragem,
-  output [DATA_WIDTH-1:0] decifragem,
-  output [7:0] chave
+  input clk, //clock
+  input sinal, //sinal
+  input [DATA_WIDTH-1:0] mensagem, //mensagem a ser cifrada
+  output [DATA_WIDTH-1:0] cifragem, //mensagem cifrada
+  output [DATA_WIDTH-1:0] decifragem, //mensagem decifrada
+  output [7:0] chave //chave OTP
   );
   
-  reg [DATA_WIDTH-1:0] reg_cifragem; 
-  reg [DATA_WIDTH-1:0] reg_decifragem;
-  reg [DATA_WIDTH-1:0] temp;
-  reg [7:0] reg_chave;
-  reg reg_bit; 
-  integer i;
-  integer j;
+  reg [DATA_WIDTH-1:0] reg_cifragem; //armazena a cifragem da mensagem
+  reg [DATA_WIDTH-1:0] reg_decifragem; //armazena a decifragem da mensagem
+  reg [DATA_WIDTH-1:0] temp; //armazena o resultado da operação XOR entre cada um dos de bits antes da realização da concatenação
+  reg [7:0] reg_chave; //armazena a chave OTP
+  reg reg_bit; //armazena o bit na qual operação XOR irá ser realizada 
+  integer i; //controla o loop
+  integer j; //controle o índice do bit da chave que irá realizar operação XOR
 
   always @(posedge clk) begin
     j = 7;
     if(sinal) begin
-        reg_chave = $random;
+        reg_chave = $random; //gera uma chave pseudo-aleatória
       for (i = DATA_WIDTH; i > 0; i = i - 1) begin
-         reg_bit = mensagem[i-1 -: 1]; 
-         temp[i-1 -: 1] = reg_bit ^ reg_chave[j];
-         reg_cifragem = {reg_cifragem, temp};
+        reg_bit = mensagem[i-1 -: 1]; //a cada execução do loop, armazena 1 bit, começando com os mais significativos
+        temp[i-1 -: 1] = reg_bit ^ reg_chave[j]; //operação XOR entre o bit da mensagem e o bit da chave
+        reg_cifragem = {reg_cifragem, temp}; //concatenação entre bits ja computados e o novo bit resultado da operação
 
-         j = j - 1;
+         j = j - 1; //diminui o índice do bit da chave a cada loop
          if (j < 0) begin
-            j = 7;
+            j = 7; //configura índice do bit da chave como o mais significativo após cada grupo de 8 bits da mensagem
          end
        end
     end else begin
