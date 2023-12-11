@@ -3,28 +3,22 @@
 
 `timescale 1ns/1ps
 
-module reg_otp_test;
-
-  parameter DATA_WIDTH = 64;
+module d_flip_flop_test;
 
   // sinais de input
-  reg clk;
-  reg sinal;
-  reg [DATA_WIDTH-1:0] mensagem;
+  reg d, clk, reset, set;
 
   // sinais de output
-  wire [DATA_WIDTH-1:0] cifragem;
-  wire [DATA_WIDTH-1:0] decifragem;
-  wire [7:0] chave;
+  wire q1, q2;
 
   // instanciação do módulo
-  reg_otp #(DATA_WIDTH) test_module (
+  d_flip_flop test_module (
+    .d(d),
     .clk(clk),
-    .sinal(sinal),
-    .mensagem(mensagem),
-    .cifragem(cifragem),
-    .decifragem(decifragem),
-    .chave(chave)
+    .reset(reset),
+    .set(set),
+    .q1(q1),
+    .q2(q2)
   );
 
   // geração de clock
@@ -37,31 +31,33 @@ module reg_otp_test;
   end
 
   initial begin
-    // teste 1
-    run_test(64'b1101101010110101011001100111100100101110100101001111011110010110); 
-    #10
-    // teste 2
-    run_test(64'b1010101101101001110011010101101101001001101110001011110110101001);
-    #10
-    // teste 3
-    run_test(64'b0110011011011100111001011100010100100100111100111001001010101100);
-    #10
-    //teste 4
-    run_test(64'b1100101010111101101011111001010011011101001110010010111011010011);
+    // configurações iniciais
+    d = 0;
+    reset = 0;
+    set = 0;
+
+    // teste (set = 0 e reset = 0)
+    #10 d = 1;
+    #10 d = 0;
+    #10 d = 1;
+    #10 d = 0;
+
+    // teste (set = 1 e reset = 0)
+    #10 set = 1;
+    #10 d = 1;
+    #10 d = 0;
+    #10 d = 1;
+    #10 d = 0;
+    #10 set = 0;
+
+    // teste (set = 0 e reset = 1)
+    #10 reset = 1;
+    #10 d = 1;
+    #10 d = 0;
+    #10 d = 1;
+    #10 d = 0;
+    #10 reset = 0;
     $finish;
   end
-  
-  // task para realização dos testes
-  task run_test(input [DATA_WIDTH-1:0] test_message);
-	begin
-    	sinal = 1; // configuração para cifragem
-    	mensagem = test_message;
-   		#10;
-    	sinal = 0; // configuração para decifragem
-    	#10;
 
-    	$display("\nNOVO TESTE\nMensagem: %b\nChave OTP: %b", mensagem, chave);
-    	$display("RESULTADOS\nCifragem: %b\nDecifragem: %b\n", cifragem, decifragem);
-    end
-  endtask
 endmodule

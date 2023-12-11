@@ -1,52 +1,28 @@
 //NOME: WESLEY MARQUES DANIEL CHAVES
 //MATRÍCULA: 2020053246
 
-module reg_otp #(parameter DATA_WIDTH = 8)(
-  input clk,
-  input sinal,
-  input [DATA_WIDTH-1:0] mensagem,
-  output [DATA_WIDTH-1:0] cifragem,
-  output [DATA_WIDTH-1:0] decifragem,
-  output [7:0] chave
-  );
+module d_flip_flop (
+  input d, //dados
+  input clk, //clock
+  input reset, //reset
+  input set, //set
+  output q1, //output
+  output q2 //negação do output
+);
   
-  reg [DATA_WIDTH-1:0] reg_cifragem; 
-  reg [DATA_WIDTH-1:0] reg_decifragem;
-  reg [DATA_WIDTH-1:0] temp;
-  reg [7:0] reg_chave;
-  reg reg_bit; 
-  integer i;
-  integer j;
-
-  always @(posedge clk) begin
-    j = 7;
-    if(sinal) begin
-        reg_chave = $random;
-      for (i = DATA_WIDTH; i > 0; i = i - 1) begin
-         reg_bit = mensagem[i-1 -: 1]; 
-         temp[i-1 -: 1] = reg_bit ^ reg_chave[j];
-         reg_cifragem = {reg_cifragem, temp};
-
-         j = j - 1;
-         if (j < 0) begin
-            j = 7;
-         end
-       end
+  reg reg_q1; //armazena o output 
+ 
+  always @(posedge clk or posedge reset or posedge set) begin
+    if (reset) begin
+      reg_q1 <= 1'b0; //configura output para zero se reset = 1
+    end else if (set) begin
+      reg_q1 <= 1'b1; //configura output para 1 se set = 1
     end else begin
-      for (i = DATA_WIDTH; i > 0; i = i - 1) begin
-         reg_bit = reg_cifragem[i-1 -: 1]; 
-         temp[i-1 -: 1] = reg_bit ^ reg_chave[j];
-         reg_decifragem = {reg_decifragem, temp};
-
-         j = j - 1;
-         if (j < 0) begin
-            j = 7;
-         end
-      end
+      reg_q1 <= d; //atribui os dados como sendo o output
     end
   end
   
-  assign cifragem = reg_cifragem;
-  assign decifragem = reg_decifragem;
-  assign chave = reg_chave;
+  assign q1 = reg_q1;
+  assign q2 = ~reg_q1;
+  
 endmodule
