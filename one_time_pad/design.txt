@@ -9,7 +9,7 @@ module reg_otp #(parameter DATA_WIDTH = 8)(
   
   reg [DATA_WIDTH-1:0] reg_cifragem; //armazena a cifragem da mensagem
   reg [DATA_WIDTH-1:0] reg_decifragem; //armazena a decifragem da mensagem
-  reg [DATA_WIDTH-1:0] temp; //armazena o resultado da operação XOR entre cada um dos de bits antes da realização da concatenação
+  reg [DATA_WIDTH-1:0] temp; //armazena o resultado da operação XOR entre cada um dos bits antes da realização da concatenação
   reg [7:0] reg_chave; //armazena a chave OTP
   reg reg_bit; //armazena o bit da mensagem na qual operação XOR irá ser realizada 
   integer i; //controla o loop
