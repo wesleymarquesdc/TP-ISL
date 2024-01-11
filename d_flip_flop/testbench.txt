@@ -1,6 +1,3 @@
-//NOME: WESLEY MARQUES DANIEL CHAVES
-//MATRÍCULA: 2020053246
-
 `timescale 1ns/1ps
 
 module d_flip_flop_test;
